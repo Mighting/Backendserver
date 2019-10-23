@@ -1,5 +1,3 @@
-import com.mysql.cj.conf.ConnectionUrl;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
@@ -12,10 +10,10 @@ import java.util.concurrent.Executors;
 
 public class CapitalizeServer {
 
-    static String connectionUrl = "jdbc:mysql://localhost:3306";
-    static String username = "Rasmus";
-    static String password = "Class";
-    static String database = "demodb";
+    static String connectionUrl = "jdbc:sqlserver://localhost;database=NordicWaterUniverseDB";
+    static String username = "sa";
+    static String password = "1234";
+    static String database = "NordicWaterUniverseDB";
 
     public static void main(String[] args) throws Exception {
         //Class.forName("com.mysql.jdbc.Driver");
@@ -32,7 +30,7 @@ public class CapitalizeServer {
     public static String updateTable(Connection con, String dbname, String whoToUpdate, String toUpdate) throws SQLException {
         PreparedStatement prepstmt = null;
 
-        String query = "UPDATE " + dbname + ".name " + "SET names='" + toUpdate + "' " + "WHERE names='" + whoToUpdate + "'";
+        String query = "UPDATE " + dbname + ".dbo.CheckedIn " + "SET ChipID='" + toUpdate + "' " + "WHERE CheckedIn='" + whoToUpdate + "'";
 
 
         try {
@@ -54,7 +52,7 @@ public class CapitalizeServer {
     public static String removeFromTable(Connection con, String dbname, String toRemove) throws SQLException {
         PreparedStatement prepstmt = null;
 
-        String query = "DELETE FROM " + dbname + ".name " + "WHERE names ='" + toRemove + "'";
+        String query = "DELETE FROM " + dbname + ".dbo.CheckedIn " + "WHERE ChipID ='" + toRemove + "'";
 
         try {
             prepstmt = con.prepareStatement(query);
@@ -75,7 +73,7 @@ public class CapitalizeServer {
     public static String insertIntoTable(Connection con, String dbname, String input) throws SQLException {
         PreparedStatement prepstmt = null;
 
-        String query = "INSERT INTO " + dbname + ".name " + "VALUES(?)";
+        String query = "INSERT INTO " + dbname + ".dbo.CheckedIn " + "VALUES(?)";
 
         try {
             prepstmt = con.prepareStatement(query);
@@ -94,20 +92,23 @@ public class CapitalizeServer {
         }
     }
 
-    public static List<String> ViewTable(Connection con, String dbname) throws SQLException {
+    public static List<String> ViewTable(Connection con, String dbname, String area) throws SQLException {
 
         PreparedStatement stmt = null;
-        String query = "select *" + "from " + dbname + ".name";
+        String query = "select *" + " from " + dbname + ".dbo.CheckedIn" + " WHERE " + dbname + ".dbo.CheckedIn.Area = " + area;
 
 
-        ArrayList<String> names = new ArrayList<>();
+        ArrayList<String> ids = new ArrayList<>();
 
         try {
             stmt = con.prepareStatement(query);
-            ResultSet rs = stmt.executeQuery(query);
+            ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                String name = rs.getString("names");
-                names.add(name);
+                String id = rs.getString("ChipID");
+                ids.add(id);
+                id = rs.getString("CheckInTime");
+                ids.add(id);
+                ids.add("\n");
             }
         } catch (SQLException e) {
             System.out.println(e);
@@ -115,7 +116,11 @@ public class CapitalizeServer {
             if (stmt != null) {
                 stmt.close();
             }
-            return names;
+            if (ids.isEmpty()){
+                ids.add("No one is Checked In");
+            }
+            System.out.println(ids);
+            return ids;
         }
     }
 
@@ -136,13 +141,31 @@ public class CapitalizeServer {
                 while (in.hasNextLine()) {
 
                     switch (in.nextLine()) {
-                        case "Retrieve":
-                            out.println("Current names in the Database: ");
-                            out.println("\n");
+                        case "Retrieve Area 1":
+                            out.println("Current Customers Checked In in Area 1: ");
                             out.println(ViewTable(DriverManager.getConnection
-                                    (connectionUrl, username, password), database));
+                                    (connectionUrl, username, password), database, in.nextLine()));
+                            out.println();
                             break;
-                        case "Create":
+                        case "Retrieve Area 2":
+                            out.println("Current Customers Checked In in Area 2");
+                            out.println(ViewTable(DriverManager.getConnection
+                                    (connectionUrl, username, password), database, in.nextLine()));
+                            out.println();
+                            break;
+                        case "Retrieve Area 3":
+                            out.println("Current Customers Checked In in Area 3");
+                            out.println(ViewTable(DriverManager.getConnection
+                                    (connectionUrl, username, password), database, in.nextLine()));
+                            out.println();
+                            break;
+                        case "Retrieve Area 4":
+                            out.println("Current Customers Checked In in Area 4");
+                            out.println(ViewTable(DriverManager.getConnection
+                                    (connectionUrl, username, password), database, in.nextLine()));
+                            out.println();
+                            break;
+                        /*case "Create":
                             out.println(insertIntoTable(DriverManager.getConnection
                                     (connectionUrl, username, password), database , in.nextLine()));
                             break;
@@ -153,9 +176,9 @@ public class CapitalizeServer {
                         case "Delete":
                             out.println(removeFromTable(DriverManager.getConnection
                                     (connectionUrl, username, password), database , in.nextLine()));
-                            break;
+                            break;*/
                         default:
-                            out.println("Unknown Command");
+                            //out.println("Unknown Command");
                             break;
                     }
                 }

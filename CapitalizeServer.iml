@@ -16,5 +16,26 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="mysql:mysql-connector-java:5.1.40" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/Downloads/Microsoft SQL Server JDBC Driver 2.0/sqljdbc_2.0/enu/sqljdbc.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/Downloads/Microsoft SQL Server JDBC Driver 2.0/sqljdbc_2.0/enu/sqljdbc4.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="mssql-jdbc-7.4.1.jre11" level="project" />
+    <orderEntry type="library" name="mssql-jdbc-7.4.1.jre11-shaded" level="project" />
   </component>
 </module>
